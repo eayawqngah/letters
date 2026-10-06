@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { PenLine, Home, Table, Eye, Edit, Trash2, LogOut, Mail, Lock, User } from 'lucide-react'
 import LetterModal from '@/components/LetterModal'
 
@@ -252,7 +252,7 @@ export default function App() {
               </button>
             </div>
 
-            <div className="space-y-4">
+            <form onSubmit={handleAuth} className="space-y-4">
               {authError && (
                 <div className={`bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${shakeError ? 'shake' : ''}`}>
                   {authError}
@@ -294,18 +294,19 @@ export default function App() {
               </div>
 
               <button
-                onClick={handleAuth}
-                className="w-full bg-linear-to-r from-[#C66F80] to-[#b35e70] text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5"
+                type="submit"
+                className="w-full from-[#C66F80] to-[#b35e70] text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-0.5"
               >
                 {isSignUp ? 'Create Account' : 'Sign In'}
               </button>
-            </div>
+            </form>
 
             <div className="mt-6 text-center text-sm text-[#4A6644]/60">
               {isSignUp ? (
                 <p>
                   Already have an account?{' '}
                   <button
+                    type="button"
                     onClick={() => {
                       setIsSignUp(false)
                       setAuthError('')
@@ -320,6 +321,7 @@ export default function App() {
                 <p>
                   Don't have an account?{' '}
                   <button
+                    type="button"
                     onClick={() => {
                       setIsSignUp(true)
                       setAuthError('')
@@ -425,8 +427,15 @@ export default function App() {
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-8">
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C66F80]"></div>
+          </div>
+        )}
+
         {/* Home Page */}
-        {currentView === 'home' && (
+        {!isLoading && currentView === 'home' && (
           <div className="fade-in">
             <div className="mb-8">
               <h2 className="text-3xl font-bold mb-2 text-[#4A6644]">Welcome back</h2>
@@ -450,7 +459,7 @@ export default function App() {
                   {letters.slice(0, 5).map((letter, index) => (
                     <div
                       key={letter.id}
-                      className="border border-[#F4C7D0] rounded-lg p-4 hover:bg-[#FCEBF1] transition-all duration-300 cursor-pointer transform hover:scale-102 hover:shadow-md"
+                      className="border border-[#F4C7D0] rounded-lg p-4 hover:bg-[#FCEBF1] transition-all duration-300 cursor-pointer transform hover:scale-[1.02] hover:shadow-md"
                       onClick={() => openViewModal(letter)}
                       style={{animation: `slideIn 0.4s ease-out ${index * 0.1}s backwards`}}
                     >
@@ -479,7 +488,7 @@ export default function App() {
         )}
 
         {/* Table View */}
-        {currentView === 'table' && (
+        {!isLoading && currentView === 'table' && (
           <div className="fade-in">
             <h2 className="text-3xl font-bold mb-6 text-[#4A6644]">All Your Letters</h2>
             
